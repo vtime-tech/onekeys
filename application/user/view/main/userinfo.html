@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>个人主页 - {$siteName}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/template.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid layadmin-homepage-fluid">
+    <div class="layui-row layui-col-space8">
+        <div class="layui-col-md12">
+            <div class="layadmin-homepage-panel layadmin-homepage-shadow">
+                <div class="layui-card text-center">
+                    <div class="layui-card-body">
+                        <div class="layadmin-homepage-pad-ver">
+                            <img class="layadmin-homepage-pad-img" src="/static/layuiadmin/style/res/template/userLogo.jpg" width="96" height="96">
+                        </div>
+                        <h4 class="layadmin-homepage-font">{$username}</h4>
+                        <p class="layadmin-homepage-min-font">VIP{$level}</p>
+                        <h4 class="layadmin-homepage-font">这个人很懒，什么都没留下</h4>
+                        <div class="layadmin-homepage-pad-ver">
+                            {eq name="phone" value=""}
+                            {else/}
+                            <a href="javascript:;" title="手机验证" class="layui-icon layui-icon-cellphone"></a>
+                            {/eq}
+                            {eq name="realname" value="0"}
+                            <a href="javascript:;" title="实名验证" class="layui-icon layui-icon-vercode"></a>
+                            {/eq}
+                            <!--QQ 微信 微博快捷登录-->
+                            <a href="javascript:;" class="layui-icon layui-icon-login-qq"></a>
+                            <a href="javascript:;" class="layui-icon layui-icon-login-wechat"></a>
+                            <a href="javascript:;" class="layui-icon layui-icon-login-weibo"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-header">个人信息</div>
+        <div class="layui-card-body" style="padding: 15px;">
+            <form class="layui-form" >
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="username" placeholder="{$username}" class="layui-input" readonly="true">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户等级</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="phone" placeholder="VIP{$level}" class="layui-input" readonly="true">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">手机号</label>
+                    <div class="layui-input-block">
+                        {switch phone}
+                        {case }
+                        {eq name="smsSwitch" value="0"}
+                        <button class="layui-btn" id="bindPhone" type="button">绑定</button>
+                        {else/}
+                        <input type="text" name="phone" placeholder="未绑定" class="layui-input" readonly="true">
+                        {/eq}
+                        {/case}
+                        {default /}
+                        <input type="text" name="phone" placeholder="{$phone}" class="layui-input" readonly="true">
+                        {/switch}
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">实名认证</label>
+                    <div class="layui-input-block">
+                        {switch realname}
+                        {case 1}
+                        {eq name="realnameSwitch" value="0"}
+                        <button class="layui-btn" lay-href="/user/realname/index" lay-text="实名认证" type="button">实名</button>
+                        {else/}
+                        <input type="text" name="realname" placeholder="未实名" class="layui-input" readonly="true">
+                        {/eq}
+                        {/case}
+                        {default /}
+                        <input type="text" name="realname" placeholder="已实名" class="layui-input" readonly="true">
+                        {/switch}
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">余额</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="balance" placeholder="{$balance} 元" class="layui-input" readonly="true">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['jquery','index','form'],function (){
+        var $ = layui.$
+            ,admin = layui.admin
+        $("#bindPhone").click(function (){
+            layer.open({
+                type: 2
+                ,title:'绑定手机'
+                ,content: ['/user/main/bindphone','no']
+                ,shadeClose: true
+                ,area: admin.screen() < 2 ? ['90%', '80%'] : ['375px', '500px']
+            });
+        });
+        $("#bindEmail").click(function (){
+            layer.open({
+                type: 2
+                ,title:'绑定邮箱'
+                ,content: ['/user/main/bindemail','no']
+                ,shadeClose: true
+                ,area: admin.screen() < 2 ? ['90%', '80%'] : ['375px', '500px']
+            });
+        })
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>添加管理员 - {$siteName}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md15">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <form class="layui-form" action="" lay-filter="component-form-element">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">用户名：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="username" id="LAY-user-login-cellphone" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">密码：</label>
+                            <div class="layui-input-block">
+                                <input type="password" name="password" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">手机号：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="phone" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">邮箱：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="email"  placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">身份：</label>
+                            <div class="layui-input-block">
+                                <select name="identity" lay-verify="required">
+                                    <option value="" value="">请选择一个身份</option>
+                                    <option value="1">超级管理员</option>
+                                    <option value="2">管理员</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">状态：</label>
+                            <div class="layui-input-block">
+                                <select name="status" lay-verify="required">
+                                    <option value="" value="">请选择一个状态</option>
+                                    <option value="0">激活</option>
+                                    <option value="1">封禁</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="component-form-element">提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form','user'], function(){
+        var $ = layui.$
+            ,form = layui.form
+            ,admin = layui.admin
+            ,index = parent.layer.getFrameIndex(window.name); //获得当前iframe的索引
+        form.render();
+        form.on('submit(component-form-element)', function(data){
+            //请求接口
+            admin.req({
+                url: '/admin/main/addAdmin'
+                , method: 'POST'
+                , data: data.field
+                , done: function (res) {
+                    layer.msg(res.msg, {
+                        icon: 1
+                        , time: 1000
+                    }, function () {
+                        parent.layer.close(index);
+                        parent.window.location.reload();
+                    });
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

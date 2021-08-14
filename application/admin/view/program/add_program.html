@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>添加程序 - {$siteName}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md15">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <form class="layui-form" action="" lay-filter="component-form-element">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">服务器：</label>
+                            <div class="layui-input-block">
+                                <select name="serverId" lay-verify="required">
+                                    <option value="">选择服务器</option>
+                                    {foreach $server as $key=>$vo }
+                                    <option value="{$vo.id}">{$vo.name} - {eq name="vo.realname" value="0"}需要实名{else/}无需实名{/eq}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">产品ID：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="productId" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">程序名称：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="name" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">安装文件：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="install" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">价格：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="price" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="component-form-element">提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form','user'], function(){
+        var $ = layui.$
+            ,form = layui.form
+            ,admin = layui.admin
+            ,index = parent.layer.getFrameIndex(window.name);
+        form.render();
+        form.on('submit(component-form-element)', function(data){
+            // console.log(data.field)
+            //请求接口
+            admin.req({
+                url: '/admin/program/addProgram'
+                , method: 'POST'
+                , data: data.field
+                , done: function (res) {
+                    layer.msg(res.msg, {
+                        icon: 1
+                        , time: 1000
+                    }, function () {
+                        parent.layer.close(index);
+                        parent.window.location.reload();
+                    });
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

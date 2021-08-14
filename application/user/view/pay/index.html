@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>在线充值 - {$siteName}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">在线充值</div>
+                <div class="layui-card-body">
+                    <form class="layui-form" action="" lay-filter="component-form-element">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">充值金额：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="money" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">充值通道：</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="gateway" value="alipay" title="支付宝" checked>
+                                <input type="radio" name="gateway" value="wxpay" title="微信">
+                                <input type="radio" name="gateway" value="qqpay" title="QQ钱包">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="component-form-element">提交</button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    　　<div id="pcScan">　　
+    　　</div>
+</div>
+
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form'], function(){
+        var $ = layui.$
+            ,admin = layui.admin
+            ,form = layui.form;
+        form.render();
+        form.on('submit(component-form-element)', function(data){
+            //请求接口
+            admin.req({
+                url: '/user/pay/index'
+                , method: 'POST'
+                , data: data.field
+                ,beforeSend: function () {
+                    loadIndex = layer.load(1);
+                }
+                ,complete: function (){
+                    layer.close(loadIndex);
+                }
+                , done: function (res) {
+                    if (res.code === 0)
+                    {
+                        if (res.data.type == 'alipay')
+                        {
+                            window.parent.location.href = '/user/pay/alipayJump?tradeNo='+ res.data.tradeNo;
+                            return false;
+                        }
+                        if (res.data.type == 'wxpay')
+                        {
+                            layer.open({
+                                type: 2
+                                ,title:'微信扫码'
+                                ,content: ['/user/pay/wxpayScan?code_url=' + res.data.url + '&out_trade_no=' + res.data.out_trade_no,'no']
+                                ,shadeClose: true
+                                ,area: admin.screen() < 2 ? ['90%', '80%'] : ['375px', '500px']
+                            })
+                        }
+                        window.parent.location.href = res.data.url;
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

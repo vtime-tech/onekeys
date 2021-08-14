@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>代理等级 - {$siteName}</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+<div class="layui-fluid">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md6">
+      <div class="layui-card">
+        <div class="layui-card-header">代理等级</div>
+        <div class="layui-card-body">
+          <table class="layui-table">
+            <colgroup>
+              <col width="100">
+              <col>
+            </colgroup>
+            <tbody>
+            <tr>
+              <td>当前等级</td>
+              <td>VIP{$level}</td>
+            </tr>
+            <tr>
+              <td>下一级</td>
+              <td>
+                {eq name="maxLevel" value="1" }
+                VIP{$nextLevel}
+                {else/}
+                您已经是最高级
+                {/eq}
+              </td>
+            </tr>
+            <tr>
+              <td>升级价格</td>
+              <td>
+                {eq name="maxLevel" value="1" }
+                {$price}元
+                {else/}
+                您已经是最高级
+                {/eq}
+              </td>
+            </tr>
+            <tr>
+              <td>升级</td>
+              <td>
+                {eq name="maxLevel" value="1" }
+                <button class="layui-btn" id="up">升级</button>
+                {else/}
+                您已经是最高级
+                {/eq}
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md6">
+      <div class="layui-card">
+        <div class="layui-card-header">代理优势</div>
+        <div class="layui-card-body">
+          <div class="layui-collapse" lay-filter="component-panel">
+            <div class="layui-colla-item">
+              <h2 class="layui-colla-title">低成本投入</h2>
+              <div class="layui-colla-content">
+                <p>您将获取更低的价格来建设您的网站，无需担心维护，您只需将重心放在业务即可</p>
+              </div>
+            </div>
+            <div class="layui-colla-item">
+              <h2 class="layui-colla-title">服务支持</h2>
+              <div class="layui-colla-content">
+                <p>专人专线的VIP1对1服务，从网站搭建、API接入、到调试上线，全程悉心陪伴</p>
+              </div>
+            </div>
+            <div class="layui-colla-item">
+              <h2 class="layui-colla-title">一键接入</h2>
+              <div class="layui-colla-content">
+                <p>只需按规范对接API接口 ，便可轻松、低成本的从资源池中获取网站业务资源</p>
+              </div>
+            </div>
+            <div class="layui-colla-item">
+              <h2 class="layui-colla-title">技术对接</h2>
+              <div class="layui-colla-content">
+                <p>针对VIP用户开启VIP技术对接，可进行网站小部分修改</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+  layui.config({
+    base: '/static/layuiadmin/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index'], function(){
+    var $ = layui.$
+            ,admin = layui.admin;
+    $('#up').click(function (){
+      layer.confirm('您确定升级吗？', {
+        btn: ['确定','取消'] //按钮
+      }, function(){
+        admin.req({
+          url: '/user/daili/upLevel'
+          , method: 'POST'
+          , done: function (res) {
+            layer.msg(res.msg, {
+              icon: 1
+              ,time: 1000
+            }, function(){
+              window.location.reload();
+            });
+          }
+        });
+      });
+    });
+  });
+</script>
+</body>
+</html>

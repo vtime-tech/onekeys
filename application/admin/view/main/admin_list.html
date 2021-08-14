@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>管理员列表 - {$siteName}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">管理员列表</div>
+                <div class="layui-card-body">
+
+                    <div class="test-table-reload-btn" style="margin-bottom: 10px;">
+                        搜索用户名：
+                        <div class="layui-inline">
+                            <input class="layui-input" name="username" id="table-Reload" autocomplete="off">
+                        </div>
+                        <button class="layui-btn" data-type="reload">搜索</button>
+                    </div>
+
+                    <table class="layui-hide" id="user-table-reload" lay-filter="user-table-reload"></table>
+                    <script type="text/html" id="table-toolbar-toolbar">
+                        <div class="layui-btn-container">
+                            <button class="layui-btn layui-btn-sm" lay-event="addAdmin">添加管理员</button>
+                        </div>
+                    </script>
+                    <script type="text/html" id="table-toolbar">
+                        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                        <a class="layui-btn layui-btn-xs" lay-event="repass">重置</a>
+                        <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="do">操作</a>
+                        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table'], function(){
+        var table = layui.table
+            ,admin = layui.admin;
+        //方法级渲染
+        table.render({
+            elem: '#user-table-reload'
+            ,url: '/admin/main/adminList'
+            ,toolbar: '#table-toolbar-toolbar'
+            ,method:'POST'
+            ,cols: [[
+                {field:'id', title: 'ID', width:80}
+                ,{field:'username', title: '用户名', width:150}
+                ,{field:'phone', title: '手机号', width:130}
+                ,{field:'email', title: '邮箱',width:150}
+                ,{field:'status', title: '状态',templet: function(res){
+                        if (res.status == 1)
+                        {
+                            return '封禁'
+                        }
+                        return '激活'
+                    }}
+                ,{field:'create_time', title: '开通时间', width:170}
+                ,{fixed: 'right', title:'操作', toolbar: '#table-toolbar', width:210}
+            ]]
+            ,page: true
+        });
+        //头工具栏事件
+        table.on('toolbar(user-table-reload)', function(obj){
+            switch(obj.event){
+                case 'addAdmin':
+                    layer.open({
+                        type: 2
+                        ,title:'添加管理员'
+                        ,content: ['/admin/main/addAdmin','no']
+                        ,shadeClose: true
+                        ,area: admin.screen() < 2 ? ['90%', '80%'] : ['375px', '500px']
+                    });
+                    break;
+            }
+        });
+        //监听行工具事件
+        table.on('tool(user-table-reload)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'do'){
+                layer.msg('您将对 ' + data.username + ' 采取账号操作', {
+                        btn: ['激活', '封禁'],
+                        btn1: function () {
+                            admin.req({
+                                url: '/admin/main/adminList?action=AdminStatus'
+                                , method: 'POST'
+                                , data: {'userId': data.id, 'status': '0'}
+                                , done: function (res) {
+                                    obj.update({
+                                        status: 0
+                                    });
+                                    layer.msg(res.msg, {'icon': 1})
+                                }
+                            });
+                        },
+                        btn2: function () {
+                            admin.req({
+                                url: '/admin/main/adminList?action=AdminStatus'
+                                , method: 'POST'
+                                , data: {'userId': data.id, 'status': '1'}
+                                , done: function (res) {
+                                    obj.update({
+                                        status: 1
+                                    });
+                                    layer.msg(res.msg, {'icon': 1})
+                                }
+                            });
+                        }
+                    },
+                );
+            } else if(obj.event === 'repass'){
+                layer.msg('您将对 ' + data.username + ' 采取重置密码操作', {
+                        btn: ['确认', '取消'],
+                        btn1: function () {
+                            admin.req({
+                                url: '/admin/main/AdminList?action=repass'
+                                , method: 'POST'
+                                , data: {'userId': data.id}
+                                , done: function (res) {
+                                    layer.confirm('新密码：' + res.data.newpass, {
+                                        btn: ['确定']
+                                    });
+                                }
+                            });
+                        }
+                    },
+                );
+            }else if (obj.event === 'del'){
+                layer.msg('您将删除 ' + data.username + '管理员',{
+                    btn: ['确定', '取消'],
+                    btn1:function (){
+                        admin.req({
+                            url: '/admin/main/AdminList?action=del'
+                            , method: 'POST'
+                            , data: {'userId': data.id}
+                            , done: function (res) {
+                                obj.del();
+                                layer.msg(res.msg, {'icon': 1})
+                            }
+                        });
+                    }
+                })
+            }else if (obj.event === 'edit'){
+                layer.open({
+                    type: 2
+                    ,title:'修改管理员'
+                    ,content: ['/admin/main/editAdmin?userId='+ data.id,'no']
+                    ,shadeClose: true
+                    ,area: admin.screen() < 2 ? ['90%', '80%'] : ['375px', '500px']
+                });
+            }
+        });
+        var $ = layui.$, active = {
+            reload: function(){
+                var Reload = $('#table-Reload');
+
+                //执行重载
+                table.reload('user-table-reload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        username: Reload.val()
+                    }
+                });
+            }
+        };
+
+        $('.test-table-reload-btn .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+</script>
+</body>
+</html>

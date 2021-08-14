@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>API设置 - {$siteName}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">API参数</div>
+                <div class="layui-card-body">
+                    <form class="layui-form" action="" lay-filter="component-form-element">
+                        {eq name="hasApi" value="0"}
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">SecretId：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="secret_id" value="{$secret_id}" autocomplete="off" class="layui-input" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">SecretKey：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="secret_key" value="{$secret_key}" autocomplete="off" class="layui-input" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">接口地址：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="api_url" value="{$api_url}" autocomplete="off" class="layui-input" readonly="readonly">
+                            </div>
+                        </div>
+                        {else/}
+                        <blockquote class="layui-elem-quote">您当前还没有申请您的专属API，加入我们共同致富</blockquote>
+                        <button class="layui-btn layui-btn-normal layui-btn-radius" lay-submit lay-filter="payload">申请API</button>
+                        {/eq}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form'], function(){
+        var $ = layui.$
+            ,admin = layui.admin
+            ,form = layui.form;
+        form.render();
+        form.on('submit(payload)', function(){
+            //请求接口
+            admin.req({
+                url: '/user/daili/payload'
+                , method: 'POST'
+                , done: function (res) {
+                    layer.msg(res.msg,{icon:1},function () {
+                        window.location.reload();
+                    });
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

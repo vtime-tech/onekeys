@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>服务器状态 - {$siteName}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">服务器状态</div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="banner-table-reload" lay-filter="banner-table-reload"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table'], function () {
+        var table = layui.table
+            , admin = layui.admin;
+
+        function getReadableSize(KByte) {
+            if (KByte < 1024 * 1024) {
+                return ((KByte / 1024).toFixed(2) + " KB");
+            } else if (KByte < 1024 * 1024 * 1024) {
+                return ((KByte / 1024 * 1024).toFixed(2) + " MB");
+            } else {
+                return ((KByte / (1024 * 1024 * 1024)).toFixed(2) + " GB");
+            }
+        }
+
+        //方法级渲染
+        table.render({
+            elem: '#banner-table-reload'
+            , url: '/admin/server/serverStatus'
+            , method: 'POST'
+            , cols: [[
+                {field: 'id', title: 'ID', width: 70}
+                , {field: 'name', title: '服务器名称', width: 200}
+                , {field: 'ip', title: 'IP', width: 200}
+                , {
+                    field: 'type', title: '类型', width: 200, templet: function (res) {
+                        if (res.type === 1) {
+                            return 'Kangle'
+                        }
+                        return '未知'
+                    }
+                }
+                , {
+                    field: 'connect', title: '连接数', width: 200
+                }
+                , {
+                    field: 'disk_free', title: '硬盘剩余空间', templet: function (res) {
+                        return getReadableSize(res.disk_free);
+                    }, width: 200
+                }
+                , {field: 'system', title: '节点版本', width: 200}
+                , {field: 'os', title: '服务器系统', width: 200}
+            ]]
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>实名认证 - {$siteName}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">实名认证</div>
+                <div class="layui-card-body">
+                    {eq name="realnameStatus" value="1"}
+                    <form class="layui-form" action="" lay-filter="component-form-element">
+                        <blockquote class="layui-elem-quote">根据《中华人民共和国网络安全法》等网络安全相关法律法规规定，及按网监，公安等有关监管单位要求，云计算资源用户须完成用户实名认证才能使用云服务。请您认真填写相关实名认证信息，完成实名认证申请。</blockquote>
+                        <div class="layui-form-item">
+                                <label class="layui-form-label">姓名：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="realname" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                                </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">身份证：</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="idnum" lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">实名通道：</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="gateway" value="generic" title="三要素身份认证" checked>
+                                <input type="radio" name="gateway" value="alipay" title="支付宝APP认证">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="component-form-element">提交</button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                        <blockquote class="layui-elem-quote layui-quote-nm">
+                            1. 实名按每次 {$realnamePrice} 元收认证手续费，认证费用用于支付三大运营商及银联、支付宝实名认证接口费用，余额不足则该账号无法继续认证
+                            </br>
+                            2. 请确保姓名、身份证号码完全正确，请勿使用他人身份信息进行认证，否则会认证失败
+                            </br>
+                            3. 注册手机号必须属本人所有，请勿使用他人手机进行注册，否则认证会失败，如果非本人手机号码，请先修改手机号再进行实名认证
+                            </br>
+                            4. 请勿使用虚假信息认证，否则{$siteName}有权注销您的实名认证申请
+                            </br>
+                            5. {$siteName}会加密保存您的认证资料，绝不会泄露用户隐私，请放心认证
+                            {$siteName}
+                            </br>
+                            6. 所填写资料仅用于实名认证，不会开通其他任何附加服务，{$siteName}工作人员不会向您索要短信验证码，谨防上当
+                        </blockquote>
+                    </form>
+                    {else/}
+                    <div style="text-align: center;">
+                    <div class="layui-form-item">
+                        <img src="/static/layuiadmin/style/res/template/success.png">
+                    </div>
+                    <div class="layui-form-item">
+                    认证类型：{$type}
+                    </div>
+                    <div class="layui-form-item">
+                    姓名：{$trueName}
+                    </div>
+                    <div class="layui-form-item">
+                    身份证号码：{$idCard}
+                    </div>
+                    <div class="layui-form-item">
+                    认证完成时间：{$date}
+                    </div>
+                    </div>
+                    {/eq}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form'], function(){
+        var $ = layui.$
+            ,admin = layui.admin
+            ,form = layui.form;
+
+        form.render();
+        form.on('submit(component-form-element)', function(data){
+            if (data.field.gateway === 'alipay')
+            {
+                admin.req({
+                    url: '/user/realname/index'
+                    , method: 'POST'
+                    , data: data.field
+                    ,beforeSend: function () {
+                        loadIndex = layer.load(1);
+                    }
+                    ,complete: function (){
+                        layer.close(loadIndex);
+                    }
+                    , done: function (res) {
+                        if (res.code === 0)
+                        {
+                            layer.open({
+                                type: 2
+                                ,title:'支付宝扫码'
+                                ,content: ['/user/realname/alipaycertify?certifyId=' + res.data.certifyId,'no']
+                                ,shadeClose: true
+                                ,area: admin.screen() < 2 ? ['90%', '80%'] : ['375px', '500px']
+                            });
+                        }
+                    }
+                });
+                return false;
+            }
+            //请求接口
+            admin.req({
+                url: '/user/realname/index'
+                , method: 'POST'
+                , data: data.field
+                ,beforeSend: function () {
+                    loadIndex = layer.load(1);
+                }
+                ,complete: function (){
+                    layer.close(loadIndex);
+                }
+                , done: function (res) {
+                    layer.msg('认证成功', {
+                        icon: 1
+                        , time: 1000
+                    }, function () {
+                        window.location.reload();
+                    });
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

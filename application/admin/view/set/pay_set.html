@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>支付设置 - {$siteName}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">支付设置</div>
+                <div class="layui-card-body">
+                    <form class="layui-form" action="" lay-filter="component-form-element">
+                        <div class="layui-form-item">
+                            <fieldset class="layui-elem-field">
+                                <legend>总开关</legend>
+                                <div class="layui-field-box">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">模块状态：</label>
+                                        <div class="layui-input-block">
+                                            {eq name="pay_switch" value="0"}
+                                            <input type="radio" name="pay_switch" value="0" title="开启"  checked>
+                                            <input type="radio" name="pay_switch" value="1" title="关闭">
+                                            {else/}
+                                            <input type="radio" name="pay_switch" value="0" title="开启" >
+                                            <input type="radio" name="pay_switch" value="1" title="关闭" checked>
+                                            {/eq}
+                                        </div>
+                                        <hr>
+                                        <blockquote class="layui-elem-quote">当你关闭这个开关，那么支付模块将被关闭</blockquote>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                            <div class="layui-form-item">
+                                <fieldset class="layui-elem-field">
+                                    <legend>支付宝</legend>
+                                    <div class="layui-field-box">
+                                        <div class="layui-form-item">
+                                            <blockquote class="layui-elem-quote">支付宝身份验证调用与支付功能同数据，所以复用页面</blockquote>
+                                        <label class="layui-form-label">应用ID：</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="alipay_appId"  value="{$alipay_appId}" autocomplete="off" class="layui-input">
+                                        </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">应用公钥：</label>
+                                            <div class="layui-input-block">
+                                                <textarea name="alipay_publicKey" placeholder="" class="layui-textarea">{$alipay_publicKey}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">应用私钥：</label>
+                                            <div class="layui-input-block">
+                                                <textarea name="alipay_privateKey" placeholder="" class="layui-textarea">{$alipay_privateKey}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">通道开关：</label>
+                                            <div class="layui-input-block">
+                                                {eq name="alipay_switch" value="0"}
+                                                <input type="radio" name="alipay_switch" value="0" title="开启"  checked>
+                                                <input type="radio" name="alipay_switch" value="1" title="关闭">
+                                                {else/}
+                                                <input type="radio" name="alipay_switch" value="0" title="开启" >
+                                                <input type="radio" name="alipay_switch" value="1" title="关闭" checked>
+                                                {/eq}
+                                            </div>
+                                            <hr>
+                                            <blockquote class="layui-elem-quote">当你关闭这个开关并且易支付开启，那么自动走易支付的支付宝通道</blockquote>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        <div class="layui-form-item">
+                            <fieldset class="layui-elem-field">
+                                <legend>微信</legend>
+                                <div class="layui-field-box">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">应用ID：</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="wxpay_appId"  value="{$wxpay_appId}" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">商户ID：</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="wxpay_mchId"  value="{$wxpay_mchId}" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">应用密钥：</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="wxpay_key"  value="{$wxpay_key}" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">通道开关：</label>
+                                        <div class="layui-input-block">
+                                            {eq name="wxpay_switch" value="0"}
+                                            <input type="radio" name="wxpay_switch" value="0" title="开启"  checked>
+                                            <input type="radio" name="wxpay_switch" value="1" title="关闭">
+                                            {else/}
+                                            <input type="radio" name="wxpay_switch" value="0" title="开启" >
+                                            <input type="radio" name="wxpay_switch" value="1" title="关闭" checked>
+                                            {/eq}
+                                        </div>
+                                        <hr>
+                                        <blockquote class="layui-elem-quote">当你关闭这个开关并且易支付开启，那么自动走易支付的微信通道</blockquote>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="layui-form-item">
+                            <fieldset class="layui-elem-field">
+                                <legend>易支付</legend>
+                                <div class="layui-field-box">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">地址：</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="epay_url"  value="{$epay_url}" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">ID：</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="epay_id"  value="{$epay_id}" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">Key：</label>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="epay_key"  value="{$epay_key}" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">通道开关：</label>
+                                        <div class="layui-input-block">
+                                            {eq name="epay_switch" value="0"}
+                                            <input type="radio" name="epay_switch" value="0" title="开启" checked>
+                                            <input type="radio" name="epay_switch" value="1" title="关闭">
+                                            {else/}
+                                            <input type="radio" name="epay_switch" value="0" title="开启">
+                                            <input type="radio" name="epay_switch" value="1" title="关闭" checked>
+                                            {/eq}
+                                        </div>
+                                        <hr>
+                                        <blockquote class="layui-elem-quote">当其他通道关闭，并且易支付通道关闭，那么将无法进行在线充值</blockquote>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="set_pay">确认保存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'set']);
+</script>
+</body>
+</html>

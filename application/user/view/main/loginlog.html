@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>登录记录 - {$siteName}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">登录记录</div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="table-toolbar" lay-filter="table-toolbar"></table>
+                    <script type="text/html" id="table-toolbar-toolbarDemo">
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table'], function(){
+        var admin = layui.admin
+            ,table = layui.table;
+
+        table.render({
+            elem: '#table-toolbar'
+            ,url: '/user/main/loginlog'
+            ,method:'POST'
+            ,toolbar: '#table-toolbar-toolbarDemo'
+            ,title: '登录记录'
+            ,cols: [[
+                {field:'uid', title:'UID', width:80}
+                ,{field:'username', title:'用户名', width:120}
+                ,{field:'ip', title:'来访IP', width:120}
+                ,{field:'ua', title:'来访UA', sort:true}
+                ,{field:'status', title:'状态', width:80, templet: function(res){
+                    if (res.status === 1)
+                    {
+                        return '<i class="layui-icon layui-icon-close-fill" style="font-size: 30px; color: red;"></i>'
+                    }
+                        return '<i class="layui-icon layui-icon-ok-circle" style="font-size: 30px; color: green;"></i>'
+                    }}
+                ,{field:'create_time', title:'来访时间',width:180}
+            ]]
+            ,page: true
+        });
+    });
+</script>
+</body>
+</html>

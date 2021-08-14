@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>消费记录 - {$siteName}</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">消费记录</div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="table-toolbar" lay-filter="table-toolbar"></table>
+                    <script type="text/html" id="table-toolbar-toolbarDemo">
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table'], function(){
+        var admin = layui.admin
+            ,table = layui.table;
+
+        table.render({
+            elem: '#table-toolbar'
+            ,url: '/user/main/expenseList'
+            ,method:'POST'
+            ,toolbar: '#table-toolbar-toolbarDemo'
+            ,title: '消费记录'
+            ,cols: [[
+                {field:'Id', title:'ID', width:80}
+                ,{field:'uid', title:'UID', width:70}
+                ,{field:'money', title:'消费金额',width:100, templet: function(res){
+                        return res.money + '元';
+                    }}
+                ,{field:'before', title:'消费前余额', width:100, templet: function(res){
+                        return res.before + '元';
+                    }}
+                ,{field:'after', title:'消费后余额',width:100, templet: function(res){
+                        return res.after + '元';
+                    }}
+                ,{field:'detail', title:'消费详情',width:440}
+                ,{field:'create_time', title:'创建时间',width:180}
+                ,{field:'update_time', title:'更新时间',width:180}
+            ]]
+            ,page: true
+        });
+    });
+</script>
+</body>
+</html>
